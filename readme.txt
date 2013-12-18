@@ -3,8 +3,8 @@ Contributors: etemplates
 Donate link: http://www.ecommercetemplates.com/donations.asp
 Tags: Wordpress ecommerce, ecommerce, online store, sell products, shopping cart, wordpress store, wordpress shopping cart, ecommerce software, seo, meta description, title tag, search engine friendly, search engine optimization
 Requires at least: 3
-Tested up to: 3.5.1
-Stable tag: 1.0
+Tested up to: 3.8
+Stable tag: 1.1
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -49,7 +49,10 @@ If you have a problem with the plug-in please don't just give it a bad rating or
 1. Unzip and upload the folder 'ect-seo' to the '/wp-content/plugins/' directory
 1. Activate the plugin through the 'Plugins' menu in WordPress
 1. Go to Settings and enter the meta description tags and titles for the various store pages.
-1. Go to Appearance > Editor and choose header.php. Find the WordPress theme's title tag and replace it with [the code available here](http://www.ecommercetemplates.com/wordpress/wp-plugins.asp)
+1. Go to Appearance > Editor and choose header.php. Find the WordPress theme's title tag which will look something like this
+<title><?php wp_title( '|', true, 'right' ); ?></title>
+and replace it with
+<?php echo do_shortcode('[ect_seo pn="'.$productname.'" sn="'.$sectionname.'" pd="'.$productdescription.'" ts="'.$topsection.'" sd="'.$sectiondescription.'" pid="'.$productid.'"]')?>
 1. Save header.php and check your title and meta description tags on your store pages.
 
 == Frequently asked questions ==
@@ -74,3 +77,5 @@ These pages are dynamic and created from the database. As such the meta content 
 
 = 1.0 =
 * Initial Release. June 18th 2013.
+= 1.1 =
+* Compatible with all non-store pages and 3.8. December 18th 2013.
