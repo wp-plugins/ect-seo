@@ -3,7 +3,7 @@ Contributors: etemplates
 Donate link: http://www.ecommercetemplates.com/donations.asp
 Tags: Wordpress ecommerce, ecommerce, online store, sell products, shopping cart, wordpress store, wordpress shopping cart, ecommerce software, seo, meta description, title tag, search engine friendly, search engine optimization
 Requires at least: 3
-Tested up to: 3.8
+Tested up to: 3.9
 Stable tag: 1.1
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
