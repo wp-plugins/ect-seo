@@ -79,5 +79,5 @@ These pages are dynamic and created from the database. As such the meta content 
 * Initial Release. June 18th 2013.
 = 1.1 =
 * Compatible with all non-store pages and 3.8. December 18th 2013.
-= 1.1 =
+= 1.2 =
 * Now compatible with user defined title and meta description tags as well as ordering the elements in the title. April 17th 2015.
