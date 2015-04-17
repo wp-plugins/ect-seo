@@ -51,7 +51,7 @@ If you have a problem with the plug-in please don't just give it a bad rating or
 1. Go to Settings and enter the meta description tags and titles for the various store pages.
 1. Go to Appearance > Editor and choose header.php. Find the WordPress theme's title tag which will look something like this
 <title><?php wp_title( '|', true, 'right' ); ?></title>
-and replace it with
+and replace it with...
 <?php echo do_shortcode('[ect_seo]')?>
 1. Save header.php and check your title and meta description tags on your store pages.
 
