@@ -5,7 +5,7 @@
 	Description:This plugin will automatically add meta description tags and will set title the for all ECT store pages.
 	Author:Andy Chapman
 	Author URI:http://www.ecommercetemplates.com
-	Version:1.0
+	Version:1.3
 */ 
 function ect_seo_fun($arr) 
 {	
@@ -116,8 +116,14 @@ function ect_seo_fun($arr)
 		$Title='Track your purchase from '.esc_attr(get_bloginfo('name', 'display'));
 		$Meta=esc_attr(get_bloginfo('name', 'display')).' tracking page';
 		return GenerateSeoTags('tracking',$Title,$Meta);
-	}else
+	}
+	elseif(is_front_page()){
+		
+		return GenerateSeoTags('front_page',$Title,$Meta,'');
+	}
+	else
 	{
+		
 		if ( defined( 'WPSEO_VERSION' ) ) {
     		// WordPress SEO is activated
         		$Title=wp_title('',false);
@@ -137,7 +143,7 @@ function ect_seo_nav()
 }
 function ect_seo_nav_fun()
 {
-	$PagesArr=array('products','categories','cart','affiliate','clientlogin','giftcertificate','orderstatus','search','sorry','thanks','tracking');
+	$PagesArr=array('front_page','products','categories','cart','affiliate','clientlogin','giftcertificate','orderstatus','search','sorry','thanks','tracking');
 	$Exc=array('proddetail');	
 ?>
 	<h2>ECT SEO MANAGER</h2>
@@ -153,7 +159,7 @@ function ect_seo_nav_fun()
 			<?php foreach($PagesArr as $P):?>
 			<?php if(!in_array($P,$Exc)):?>
 			<li>
-				<label><?php echo ucfirst($P);?></label>
+				<label><?php echo ucfirst(str_replace('_',' ',$P));?></label>
 				<input type="text" name="seo_data_title[<?php echo $p?>]" value="<?php echo stripslashes(get_option('ect_seo_'.$P.'_title'))?>" />
 				<input type="text" name="seo_data_metacnt[<?php echo $p?>]" value="<?php echo stripslashes(get_option('ect_seo_'.$P.'_meta_description'))?>" />
 			</li>	
@@ -205,7 +211,7 @@ function ect_seo_nav_fun()
 <?php
 	if(!empty($_POST))
 	{
-		$PagesArr2=array('products','categories','cart','affiliate','clientlogin','giftcertificate','orderstatus','search','sorry','thanks','tracking');		
+		$PagesArr2=array('front_page','products','categories','cart','affiliate','clientlogin','giftcertificate','orderstatus','search','sorry','thanks','tracking');		
 		update_option('ect_seo_pdts',$_POST['pdts']);
 		update_option('ect_seo_pts',$_POST['pts']);
 		update_option('ect_seo_cts',$_POST['cts']);
@@ -224,7 +230,7 @@ function ect_seo_nav_fun()
 
 function GenerateSeoTags($P,$DefTitle='',$DefDesc='',$DefKey='')
 {
-
+	global $post;
 		global $pagetitle,$topsection,$sectionname,$sectiondescription,$productname,$productid,$productdescription;
 		$Title=get_option('ect_seo_'.$P.'_title');
 		$Meta=get_option('ect_seo_'.$P.'_meta_description');
@@ -237,12 +243,23 @@ function GenerateSeoTags($P,$DefTitle='',$DefDesc='',$DefKey='')
 		$Title	=!empty($Title) ? $Title : $DefTitle;
 		$Meta	=!empty($Meta) ? $Meta : $DefDesc;
 		$Key	=!empty($Key) ? $Key : $DefKey;
+		$BlogInfo=esc_attr(get_bloginfo('name', 'display'));
+		$Title1=get_option('ect_seo_'.$post->ID.'_title');
+		$Meta1=get_option('ect_seo_'.$post->ID.'_meta_description');
+		if(!empty($post->ID) && !empty($Title1))
+			$Title=$Title1;
+		if(!empty($post->ID) && !empty($Meta1))	
+			$Meta=$Meta1;
 	//echo $productname;
-	$BlogInfo=esc_attr(get_bloginfo('name', 'display'));
+	
 	$T	=str_replace("%SHOW_BLOG_NAME%",$BlogInfo,$Title);
 	$M	=str_replace("%SHOW_BLOG_NAME%",$BlogInfo,$Meta);
 	$K	=str_replace("%SHOW_BLOG_NAME%",$BlogInfo,$Key);
-
+	if(empty($P))
+	{
+			return '	<title>'.$T.'</title> 
+			<meta name="Description" content="'.$M.'" /> ';
+	}		
 	$DynamicMetaPages=array('proddetail','products','categories');
 	if(!empty($pagetitle))
 	{
@@ -275,5 +292,50 @@ function GenerateSeoTags($P,$DefTitle='',$DefDesc='',$DefKey='')
 	{
 		return '	<title>'.$T.'</title> 
 			<meta name="Description" content="'.$M.'" /> ';	}		
+}
+add_action( 'add_meta_boxes', 'ect_seo_box_fun' );
+function ect_seo_box_fun()
+{
+	$screens = array( 'post', 'page' );
+
+    foreach ( $screens as $screen ) 
+	    add_meta_box('ect_cust_seo_mb',__( 'ECT SEO ', 'myplugin_textdomain' ),'ect_seo_b',$screen);
+}
+function ect_seo_b()
+{
+	global $post;
+	echo '<ul class="ect_seo">
+		<li>
+			<label>Page Title</label>
+			<input type="text" name="ect_seo_title" value="'.get_option('ect_seo_'.$post->ID.'_title').'"/>
+		</li>
+		<li>
+			<label>Page Meta Description</label>
+			<textarea name="ect_seo_desc" >'.get_option('ect_seo_'.$post->ID.'_meta_description').'</textarea>
+		</li>
+	</ul><style>
+		.ect_seo li input[type=text]
+		{
+			width:320px;
+		}
+		.ect_seo li textarea
+		{
+			width:320px;
+			height:85px;
+		}
+		.ect_seo li label
+		{
+			width:138px;
+			display:inline-block;
+			float:left;
+		}
+	</style>';
+}
+add_action( 'save_post', 'ect_seo_save_post_fun' );
+function ect_seo_save_post_fun()
+{
+	global $post;
+	update_option('ect_seo_'.$post->ID.'_title',$_POST['ect_seo_title']);
+	update_option('ect_seo_'.$post->ID.'_meta_description',$_POST['ect_seo_desc']);
 }
 ?>
